@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:title="Cartões" android:id="@+id/menu_card"
+		android:icon="@drawable/history"></item>
+	<item android:title="Sobre" android:id="@+id/menu_about"
+		android:icon="@drawable/light"></item>
+	<item android:title="Sair" android:icon="@drawable/exit"
+		android:id="@+id/menu_quit"></item>
+</menu>
