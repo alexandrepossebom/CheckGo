@@ -1,19 +1,14 @@
 package com.possebom.checkgopro;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.ByteArrayBuffer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +17,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -50,6 +47,10 @@ public class MainActivity extends Activity implements Runnable {
 	private static ArrayList<String> cardName = new ArrayList<String>();
 	private static ArrayList<String> cardSaldo = new ArrayList<String>();
 	private static ArrayList<String> cardLast = new ArrayList<String>();
+	private static ArrayList<String> cardNextRec = new ArrayList<String>();
+	private static ArrayList<String> cardLastRec = new ArrayList<String>();
+	
+	private int erros = 0;
 	
 	private ProgressDialog progressDialog;
 	
@@ -76,14 +77,18 @@ public class MainActivity extends Activity implements Runnable {
 		cardName.clear();
 		cardSaldo.clear();
 		cardLast.clear();
+		cardNextRec.clear();
+		cardLastRec.clear();
 		
 		for (int i = 0; i < 200; i++) {
 			if(settings.getString("card-"+i+"-number", "").length() > 0)
 			{
 				cardNumber.add( settings.getString("card-"+i+"-number", "") );
 				cardName.add(   settings.getString("card-"+i+"-name", "")   );
-				cardSaldo.add(  settings.getString("card-"+i+"-saldo", "")  );
-				cardLast.add(  settings.getString("card-"+i+"-last", "")  );	
+				cardSaldo.add(  settings.getString("card-"+i+"-saldo", "indisponível")  );
+				cardLast.add(  settings.getString("card-"+i+"-last", "indisponível")  );
+				cardNextRec.add(  settings.getString("card-"+i+"-nextrec", "indisponível")  );
+				cardLastRec.add(  settings.getString("card-"+i+"-lastrec", "indisponível")  );
 			}
 			else{
 				break;
@@ -101,6 +106,24 @@ public class MainActivity extends Activity implements Runnable {
 				seeHistory();
 			}
 		});
+		
+		if(erros > 0)
+		{
+		final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setIcon(R.drawable.icon);
+		alertDialog.setTitle("Check Go");
+		if (erros == 1)
+			alertDialog.setMessage("Ocorreu um erro verifique sua a internet.");
+		else
+			alertDialog.setMessage("Ocorreram "+erros+" erros verifique sua a internet.");
+		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				alertDialog.dismiss();
+			}
+		});
+		alertDialog.show();
+		erros = 0;
+		}
     }
     
     private void seeHistory() {
@@ -113,6 +136,39 @@ public class MainActivity extends Activity implements Runnable {
 		initView();
 	}
 
+	
+	private String getLastRec(String str)
+	{
+		for (String line: str.split("\n")) {
+			if(line.contains("!!"))
+			{
+				line = line.replaceAll("\\!\\!", "");
+				if(line.split("\\|")[0].length() == 0)
+					return "  indisponível";
+				else
+					return line.replaceAll("Valor:", "").replaceAll("\\|", " ");
+			}
+		}
+		return "indisponível";
+	}
+	
+	
+	private String getNextRec(String str)
+	{
+		for (String line: str.split("\n")) {
+			if(line.contains("**"))
+			{
+				line = line.replaceAll("\\*\\*", "");
+				if(line.split("\\|")[0].length() == 0)
+					return "  indisponível";
+				else
+					return line.replaceAll("Valor:", "").replaceAll("\\|", " ");
+			}
+		}
+		return "indisponível";
+	}
+	
+	
 	private String clearHistory(String str)
 	{
 		String[] oi = str.split("\n");
@@ -134,6 +190,8 @@ public class MainActivity extends Activity implements Runnable {
 			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 			String number = settings.getString("card-"+i+"-number", "");
 			String data = getUrl(number);
+			if(data == null)
+				erros++;
 			SharedPreferences.Editor editor = settings.edit();
 			editor.putString("card-"+i+"-status", data);
 			editor.commit();
@@ -191,6 +249,8 @@ public class MainActivity extends Activity implements Runnable {
      				{
      					SharedPreferences.Editor editor = settings.edit();
      					editor.putString("card-"+i+"-saldo", clearHistory(data));
+     					editor.putString("card-"+i+"-nextrec", getNextRec(data));
+     					editor.putString("card-"+i+"-lastrec", getLastRec(data));
      					editor.putString("card-"+i+"-history", data);
      					editor.putString("card-"+i+"-last", getDate());
      					editor.commit();
@@ -211,86 +271,92 @@ public class MainActivity extends Activity implements Runnable {
          }
  };
  
+ private boolean haveInternet(){ 
+	 NetworkInfo info=((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();  
+	 if(info==null || !info.isConnected()){  
+		 return false;  
+	 }  
+	 return true;  
+ }  
+ 
+ 
  private String getUrl(String number) {
-		//final EditText cardNumber = (EditText)findViewById(R.id.cardNumber); 
+	 if(!haveInternet())
+		 return null;
 	 
-	 	Log.d(TAG,"Getting card number : "+ number);
-		URI myURL = null;
-		try {
-			myURL = new URI("http://www.cbss.com.br/inst/convivencia/SaldoExtrato.jsp?numeroCartao=" + number);
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			Log.d(TAG,e1.getMessage());
-		}
+	 String result = null;
+	 try {
+		 URL url = new URL("http://www.cbss.com.br/inst/convivencia/SaldoExtrato.jsp?numeroCartao=" + number + "&periodoSelecionado=4");
 
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet getMethod = new HttpGet(myURL);
-		HttpResponse httpResponse;
+		 URLConnection connection = url.openConnection();
+		 InputStream inputStream = connection.getInputStream();
+		 BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);
 
-		String result = "Erro pegando dados.";
+		 ByteArrayBuffer byteArray = new ByteArrayBuffer(50);
+		 int current = 0;
+		 while((current = bufferedInput.read()) != -1){
+			 byteArray.append((byte)current);
+		 }
 
-		try {
-			httpResponse = httpClient.execute(getMethod);
-			HttpEntity entity = httpResponse.getEntity();
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				BufferedReader reader = new BufferedReader( new InputStreamReader(instream));
-				StringBuilder sb = new StringBuilder();
-				String line = null;
-				try {					
-					while ((line = reader.readLine()  ) != null) {
-						
-						//disponibiliza&ccedil;&atilde;o do benef&iacute;cio:</td>
-						line = line.replaceAll("&ccedil;", "ç");
-						line = line.replaceAll("&atilde;", "ã");
-						line = line.replaceAll("&iacute;", "í");
-						
-						if(line.contains("lido."))
-						{
-							sb.append("Cartão Inválido");
-							Log.d(TAG,"Cartão inválido");
-							break;
-						}
-						if(line.contains("topTable"))
-							continue;
-						if(line.contains("400px") )
-						{
-							sb.append(line.replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim()).append(" - ");
-						}
-						if(line.contains("50px") )
-						{
-							if(line.contains("R"))
-								sb.append(line.replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim()).append("\n");
-							else if (line.contains("/"))
-								sb.append(line.replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim()).append(" - ");
-						}
+		 result = new String(byteArray.toByteArray(), "ISO-8859-1");
+	 } catch (Exception e) {
+		 Log.d(TAG,e.getMessage());
+	 }
 
-						if(line.contains("Saldo d") )
-						{
-							sb.append(line.replaceAll("\\<.*?>","").replaceAll("dispo.*vel:", " : ").trim());
-							sb.append("\n");
-							sb.append(getDate());
-						}
 
-					}
-				} catch (Exception e) {
-					Log.d(TAG,e.getMessage());
-					result = "Erro carregando dados.";
-				} finally {
-					try {
-						instream.close();
-					} catch (Exception e) {
-						Log.d(TAG,e.getMessage());
-						result = "Erro carregando dados.";
-					}
-				}
-				result = sb.toString();
-			}
-		} catch (Exception e) {
-			Log.d(TAG,e.getMessage());
-			result = "Erro carregando dados.";
-		}
-		return result;
+	 StringBuffer sb = new StringBuffer(50);
+	 
+	 
+	 if(result == null || result.length() == 0 || ! result.contains("\n"))
+		 return null;
+	 
+	 String[] lineArr = result.split("\n");
+	 
+	 for (int i = 0; i < lineArr.length; i++) {
+		String line = lineArr[i];
+
+		 if(line.contains("lido."))
+		 {
+			 sb.append("Cartão Inválido");
+			 Log.d(TAG,"Cartão inválido");
+			 break;
+		 }
+		 if(line.contains("topTable"))
+			 continue;
+		 if(line.contains("400px") )
+		 {
+			 sb.append(line.replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim()).append(" - ");
+		 }
+		 if(line.contains("50px") )
+		 {
+			 if(line.contains("R"))
+				 sb.append(line.replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim()).append("\n");
+			 else if (line.contains("/"))
+				 sb.append(line.replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim()).append(" - ");
+		 }
+		 
+		 if(line.contains("Data da &uacute;ltima disponibiliza&ccedil;&atilde;o"))
+		 {
+			 sb.append("!!").append(lineArr[i+1].replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim());
+			 sb.append("|").append(lineArr[i+2].replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim());
+			 sb.append("\n");
+		 }
+		
+		 if(line.contains("Data da pr"))
+		 {
+			 sb.append("**").append(lineArr[i+1].replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim());
+			 sb.append("|").append(lineArr[i+2].replaceAll("\\<.*?>","").replaceAll("\\&nbsp\\;", " ").trim());
+			 sb.append("\n");
+		 }
+
+		 if(line.contains("Saldo d") )
+		 {
+			 sb.append(line.replaceAll("\\<.*?>","").replaceAll("dispo.*vel:", " : ").trim());
+			 sb.append("\n");
+			 sb.append(getDate());
+		 }
+	 }
+	 return sb.toString();
 	}
  
 	public static String getDate() {
@@ -340,6 +406,12 @@ public class MainActivity extends Activity implements Runnable {
 			sb.append("<BR>");
 			sb.append("<b>Saldo: </b>");
 			sb.append(cardSaldo.get(position));
+			sb.append("<BR>");
+			sb.append("<b>Última Recarga: </b>");
+			sb.append(cardLastRec.get(position));
+			sb.append("<BR>");
+			sb.append("<b>Próxima Recarga: </b>");
+			sb.append(cardNextRec.get(position));
 			sb.append("<BR>");
 			sb.append("<b>Última atualização: </b>");
 			sb.append(cardLast.get(position));

@@ -1,5 +1,8 @@
 package com.possebom.checkgopro;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import com.possebom.checkgopro.R;
 
 import android.app.Activity;
@@ -28,41 +31,73 @@ public class History extends Activity {
 		String[] items = data.split("\n");
 		StringBuffer sb = new StringBuffer();
 		StringBuffer sbSaldo = new StringBuffer();
+		
+		float media = 0;
+		int itens = 0;
 
-
-		int i=0;
 		for (String item : items)
 		{
 			if(item.contains(" - "))
 			{
-				i++;
-				if(i%2==0)
-					sb.append("<font color=white>");
-				else
-					sb.append("<font color=yellow>");
-					
 				String[] dados = item.split(" - ");
 				String dia = dados[0];
 				String nome = dados[1];
 				String valor = dados[2];
-
+				
+				String tmp = valor.replaceAll("R\\$", "");
+				
+				if(nome.contains("Disponibilização"))
+				{
+					sb.append("<font color=green>");
+					nome = "** Recarga **";
+				}else{
+					itens++;
+					if(itens%2==0)
+						sb.append("<font color=white>");
+					else
+						sb.append("<font color=yellow>");
+					media += Float.parseFloat(tmp.replaceAll("\\.", "").replaceAll(",", "."));
+				}
+				
 				sb.append(dia);
 				sb.append(" ");
+				
+				if(valor.length() < 9)
+				{
+					while(tmp.length() < 7)
+						tmp = " " + tmp;
+					valor = "R$" + tmp;
+				}
+				valor = valor.replaceAll(" ", "&nbsp;");
+				
 
 				if(nome.length() > 20)
-					sb.append(nome.substring(0, 20));
+					nome = nome.substring(0, 20);
 				else
-					sb.append(String.format("%1$-20s", nome).replaceAll(" ", "&nbsp;"));
+					nome = String.format("%1$-20s", nome);
+				
+				nome = nome.replaceAll(" ", "&nbsp;");
+				
+				sb.append(nome);
 				sb.append(" ");
 				sb.append(valor);
 				sb.append("<br>\n");	
 				sb.append("</font>");
 			}
 			else
-				sbSaldo.append(item).append("\n");			
+			{
+				if(!item.contains("**"))
+					if(!item.contains("!!"))
+					sbSaldo.append(item).append("\n");
+			}
 		}
 
 		view.setText(Html.fromHtml(sb.toString()));
-		viewSaldo.setText(sbSaldo.toString());
+		
+		Locale locale = new Locale("pt", "BR");  
+		NumberFormat format = NumberFormat.getInstance(locale);  
+		format.setMaximumFractionDigits(2);  
+		
+		viewSaldo.setText("Média de Consumo : R$ " + format.format(media/itens) + "\n" +  sbSaldo.toString());
 	}
 }
