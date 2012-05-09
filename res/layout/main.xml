@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-
-
-	<LinearLayout android:id="@+id/info_layout"
-		android:gravity="top" android:layout_weight="1.0" android:orientation="vertical"
-		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		<TextView android:id="@+id/TextView01" android:layout_height="wrap_content"
-		android:text="clique no cartão para ver o historico"
-		android:textStyle="normal|bold" android:gravity="center_vertical|center_horizontal"
-		android:layout_width="fill_parent"></TextView>
-			
-		<ListView android:id="@+id/listView" android:layout_height="wrap_content"
-		android:layout_width="fill_parent">
-	</ListView>
-	
-	</LinearLayout>
-	<LinearLayout android:gravity="bottom"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
-		<Button android:id="@+id/button" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="Verificar Saldo" />
-	</LinearLayout>
-</LinearLayout>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_cards_fragment"
+    android:name="com.possebom.checkgo.ListCardsFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+</fragment>

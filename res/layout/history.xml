@@ -1,17 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-<ScrollView android:id="@+id/ScrollView01"
- android:layout_width="fill_parent"
- android:layout_height="wrap_content" android:layout_weight="1">
+    <ScrollView
+        android:id="@+id/ScrollView01"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 
-	<TextView android:id="@+id/view" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:typeface="monospace" android:gravity="center"></TextView>
-</ScrollView>
-		
-	<TextView android:id="@+id/viewSaldo"
-		android:layout_height="wrap_content"  android:layout_width="fill_parent" android:gravity="center"></TextView>
+        <TableLayout
+            android:id="@+id/TableLayout01"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1" />
+    </ScrollView>
+ <com.google.ads.AdView
+        xmlns:googleads="http://schemas.android.com/apk/lib/com.google.ads"
+        android:id="@+id/ad"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        googleads:adSize="BANNER"
+        googleads:adUnitId="a14d3f11f0c254c"
+        googleads:loadAdOnCreate="true" />
+    <TextView
+        android:id="@+id/viewSaldo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" >
+    </TextView>
 
 </LinearLayout>
