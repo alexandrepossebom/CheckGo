@@ -10,7 +10,7 @@ import com.github.snowdream.android.util.Log;
 import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.model.Card;
 import com.possebom.checkgo.model.Entry;
-import com.possebom.checkgo.widget.ChechGoWidget;
+import com.possebom.checkgo.widget.CheckGoWidget;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -78,9 +78,9 @@ public final class UpdateCards {
                     updateInterface.updateSuccess();
                 }
 
-                final int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, ChechGoWidget.class));
+                final int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, CheckGoWidget.class));
                 if (ids != null && ids.length > 0) {
-                    final Intent intent = new Intent(context, ChechGoWidget.class);
+                    final Intent intent = new Intent(context, CheckGoWidget.class);
                     intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
                     intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
                     context.sendBroadcast(intent);
