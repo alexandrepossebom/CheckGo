@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:configure="com.possebom.checkgo.widget.ChechGoWidgetConfigureActivity"
+                    android:initialKeyguardLayout="@layout/chech_go_widget"
+                    android:initialLayout="@layout/chech_go_widget"
+                    android:minHeight="40dp"
+                    android:minWidth="110dp"
+                    android:previewImage="@drawable/example_appwidget_preview"
+                    android:resizeMode="horizontal"
+                    android:updatePeriodMillis="14400000"
+                    android:widgetCategory="home_screen">
+</appwidget-provider>

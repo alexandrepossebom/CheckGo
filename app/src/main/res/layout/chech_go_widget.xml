@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/layout_widget_small"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="@dimen/widget_padding"
+        android:layout_marginLeft="@dimen/widget_padding"
+        android:layout_marginRight="@dimen/widget_padding"
+        android:background="@drawable/widget_background">
+
+        <TextView
+            android:id="@+id/textViewCardTotal"
+            style="@style/WidgetTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:singleLine="true"
+            android:text="@string/no_data"/>
+
+        <TextView
+            android:id="@+id/textViewCardName"
+            style="@style/WidgetData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="3dp"/>
+
+        <TextView
+            android:id="@+id/textViewCardLastUpdate"
+            style="@style/WidgetData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:paddingBottom="3dp"
+            android:singleLine="true"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageViewTeam"
+        android:layout_width="@dimen/widgetImageSizeSmall"
+        android:layout_height="@dimen/widgetImageSizeSmall"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_launcher"/>
+
+</RelativeLayout>
