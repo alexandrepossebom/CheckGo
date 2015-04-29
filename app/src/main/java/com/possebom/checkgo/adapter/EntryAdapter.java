@@ -21,8 +21,8 @@ import java.util.Locale;
 public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> {
 
     private final Card card;
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("[dd/MM]");
-    private NumberFormat numberFormat;
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("[dd/MM]",Locale.getDefault());
+    private final NumberFormat numberFormat;
     private static final int COLOR_GREY = 394759;
 
     public EntryAdapter(Card card) {
@@ -54,9 +54,9 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewDay;
-        public TextView textViewPlace;
-        public TextView textViewAmount;
+        public final TextView textViewDay;
+        public final TextView textViewPlace;
+        public final TextView textViewAmount;
 
         public ViewHolder(View itemView) {
             super(itemView);

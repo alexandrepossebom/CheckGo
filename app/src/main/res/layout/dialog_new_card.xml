@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:ems="10"
-            android:hint="Card Name"/>
+            android:hint="@string/card_name"/>
     </com.wrapp.floatlabelededittext.FloatLabeledEditText>
 
     <com.wrapp.floatlabelededittext.FloatLabeledEditText
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:ems="10"
-            android:hint="Card Number"
+            android:hint="@string/card_number"
             android:inputType="number"/>
     </com.wrapp.floatlabelededittext.FloatLabeledEditText>
 

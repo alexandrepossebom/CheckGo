@@ -19,4 +19,11 @@
         <item name="android:singleLine">true</item>
         <item name="android:scrollHorizontally">true</item>
     </style>
+
+    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">@color/dialog_background</item>
+    </style>
+
 </resources>

@@ -19,8 +19,7 @@ import java.util.concurrent.TimeUnit;
  * Created by alexandre on 06/02/15.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class UpdateService extends JobService {
-
+public class UpdateService extends JobService implements UpdateCards.UpdateInterface {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
@@ -28,11 +27,9 @@ public class UpdateService extends JobService {
 
         if (!UpdateCards.isUpdated()) {
             Log.d("Need Update !!!");
-            UpdateCards.start(this);
+            UpdateCards.start(this, this);
         }
-
         jobFinished(params, false);
-        scheduleJob(this);
         return true;
     }
 
@@ -43,31 +40,47 @@ public class UpdateService extends JobService {
     }
 
     public static void scheduleJob(final Context context) {
+        scheduleJob(context, true);
+    }
+
+    private static void scheduleJob(final Context context, final boolean isOk) {
         final JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        final Calendar calendarNextRun = Calendar.getInstance();
 
-        final int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        final Calendar run = Calendar.getInstance();
-        run.set(Calendar.MINUTE, 30);
-        run.set(Calendar.SECOND, 0);
-
-        if (hour < 12) {
-            run.set(Calendar.HOUR_OF_DAY, 13);
+        if (!isOk) {
+            calendarNextRun.add(Calendar.HOUR_OF_DAY, 1);
         } else {
-            run.set(Calendar.HOUR_OF_DAY, 6);
-            run.add(Calendar.DAY_OF_MONTH, 1);
+            final int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            calendarNextRun.set(Calendar.MINUTE, 30);
+            calendarNextRun.set(Calendar.SECOND, 0);
+            if (hour < 12) {
+                calendarNextRun.set(Calendar.HOUR_OF_DAY, 13);
+            } else {
+                calendarNextRun.set(Calendar.HOUR_OF_DAY, 6);
+                calendarNextRun.add(Calendar.DAY_OF_MONTH, 1);
+            }
         }
 
-        final long nextRun = run.getTimeInMillis() - System.currentTimeMillis();
+        final long nextRun = calendarNextRun.getTimeInMillis() - System.currentTimeMillis();
         final long deadLine = nextRun + TimeUnit.HOURS.toMillis(5);
 
         final JobInfo.Builder builder = new JobInfo.Builder(0, new ComponentName(context, UpdateService.class));
-        //builder.setPeriodic(TimeUnit.HOURS.toMillis(4));
         builder.setMinimumLatency(nextRun);
         builder.setOverrideDeadline(deadLine);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
         builder.setPersisted(true);
 
         jobScheduler.schedule(builder.build());
-        Log.d("Job Scheduled! to: " + run.getTime());
+        Log.d("Job Scheduled! to: " + calendarNextRun.getTime());
+    }
+
+    @Override
+    public void updateSuccess() {
+        scheduleJob(this);
+    }
+
+    @Override
+    public void updateError() {
+        scheduleJob(this, false);
     }
 }

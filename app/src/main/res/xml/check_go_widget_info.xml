@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:configure="com.possebom.checkgo.widget.CheckGoWidgetConfigureActivity"
+                    android:initialKeyguardLayout="@layout/check_go_widget"
+                    android:initialLayout="@layout/check_go_widget"
+                    android:minHeight="40dp"
+                    android:minWidth="110dp"
+                    android:previewImage="@drawable/checkgo_widget_preview"
+                    android:resizeMode="horizontal"
+                    android:updatePeriodMillis="14400000"
+                    android:widgetCategory="home_screen"
+                    tools:ignore="UnusedAttribute">
+</appwidget-provider>

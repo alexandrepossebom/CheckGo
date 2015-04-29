@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">CheckGo</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="add_new_card">New Card</string>
     <string name="title_activity_history">History</string>
@@ -13,10 +12,11 @@
     <string name="label_last_charge">&lt;b>Last charge:&lt;/b> %1$s</string>
     <string name="label_next_charge">&lt;b>Next charge:&lt;/b> %1$s</string>
     <string name="label_last_update">&lt;b>Last update:&lt;/b> %1$s</string>
-    <string name="not_avaliable">Not avaliable</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
+    <string name="not_available">Not available</string>
     <string name="no_data">Sem dados</string>
+    <string name="card_name">Card Name</string>
+    <string name="card_number">Card Number</string>
+    <string name="delete_card_title">Delete Card?</string>
+    <string name="delete_card_body">Are you sure to delete this card ?</string>
 
 </resources>

@@ -3,7 +3,7 @@ package com.possebom.checkgo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +22,7 @@ import com.possebom.checkgo.model.Card;
 import com.possebom.checkgo.util.UpdateCards;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, UpdateCards.UpdateInterface, CardCallback {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, UpdateCards.UpdateInterface, CardCallback {
 
     private final CardsAdapter mAdapter = new CardsAdapter(this);
     private SwipeRefreshLayout swipeRefreshLayout;

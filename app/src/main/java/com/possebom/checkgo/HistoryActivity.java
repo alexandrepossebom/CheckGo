@@ -1,7 +1,9 @@
 package com.possebom.checkgo;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +19,7 @@ import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.model.Card;
 
 
-public class HistoryActivity extends ActionBarActivity implements View.OnClickListener {
+public class HistoryActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
     private long cardNumber;
@@ -67,10 +69,22 @@ public class HistoryActivity extends ActionBarActivity implements View.OnClickLi
         Log.d("delete card : " + cardNumber);
         final Card card = CGController.INSTANCE.getCard(cardNumber);
 
-        if (card != null) {
-            CGController.INSTANCE.getCards().remove(card);
-            CGController.INSTANCE.save(getApplicationContext());
-            finish();
-        }
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle(R.string.delete_card_title);
+        builder.setMessage(R.string.delete_card_body);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which) {
+                if (card != null) {
+                    CGController.INSTANCE.getCards().remove(card);
+                    CGController.INSTANCE.save(getApplicationContext());
+                    finish();
+                }
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.show();
+
+
     }
 }

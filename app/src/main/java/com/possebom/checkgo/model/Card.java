@@ -4,13 +4,18 @@ import android.content.Context;
 
 import com.possebom.checkgo.R;
 
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by alexandre on 05/02/15.
  */
 public class Card {
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM", Locale.getDefault());
+    private static final SimpleDateFormat SDFH = new SimpleDateFormat("dd/MM HH:mm:ss", Locale.getDefault());
     private String name;
     private Date lastUpdate;
     private Date nextCharge;
@@ -38,51 +43,43 @@ public class Card {
         return lastUpdate;
     }
 
+    public String getLastUpdateFormatted() {
+        return lastUpdate == null ? " -- " : SDFH.format(lastUpdate);
+    }
+
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getNextChargeFormatted(final Context context){
-        if(nextCharge == null){
-            return context.getResources().getString(R.string.not_avaliable);
+    public String getNextChargeFormatted(final Context context) {
+        if (nextCharge == null) {
+            return context.getResources().getString(R.string.not_available);
         }
-        return nextCharge.toString();
-    }
-
-    public Date getNextCharge() {
-        return nextCharge;
+        return SDF.format(nextCharge) + " - " + NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format((double) nextChargeValor);
     }
 
     public void setNextCharge(Date nextCharge) {
         this.nextCharge = nextCharge;
     }
 
-    public Date getLastCharge() {
-        return lastCharge;
+    public String getLastChargeFormatted() {
+        return lastCharge == null ? " -- " : SDF.format(lastCharge) + " - " + NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format((double) lastChargeValor);
     }
 
     public void setLastCharge(Date lastCharge) {
         this.lastCharge = lastCharge;
     }
 
-    public float getNextChargeValor() {
-        return nextChargeValor;
-    }
-
     public void setNextChargeValor(float nextChargeValor) {
         this.nextChargeValor = nextChargeValor;
-    }
-
-    public float getLastChargeValor() {
-        return lastChargeValor;
     }
 
     public void setLastChargeValor(float lastChargeValor) {
         this.lastChargeValor = lastChargeValor;
     }
 
-    public float getTotal() {
-        return total;
+    public String getTotalFormatted() {
+        return NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format((double) total);
     }
 
     public void setTotal(float total) {
@@ -91,10 +88,6 @@ public class Card {
 
     public long getNumber() {
         return number;
-    }
-
-    public void setNumber(long number) {
-        this.number = number;
     }
 
     public List<Entry> getEntries() {
