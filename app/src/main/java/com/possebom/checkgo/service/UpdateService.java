@@ -11,6 +11,7 @@ import android.os.Build;
 
 import com.github.snowdream.android.util.Log;
 import com.possebom.checkgo.util.UpdateCards;
+import com.possebom.checkgo.util.UpgradeCheck;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,7 @@ public class UpdateService extends JobService implements UpdateCards.UpdateInter
         if (!UpdateCards.isUpdated()) {
             Log.d("Need Update !!!");
             UpdateCards.start(this, this);
+            new UpgradeCheck(getApplication().getApplicationContext()).execute();
         }
         jobFinished(params, false);
         return true;

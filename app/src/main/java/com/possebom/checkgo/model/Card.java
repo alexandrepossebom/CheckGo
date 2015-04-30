@@ -97,4 +97,8 @@ public class Card {
     public void setEntries(List<Entry> entries) {
         this.entries = entries;
     }
+
+    public float getTotal() {
+        return total;
+    }
 }

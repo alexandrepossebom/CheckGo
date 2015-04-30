@@ -1,5 +1,8 @@
 package com.possebom.checkgo.util;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -7,9 +10,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.github.snowdream.android.util.Log;
+import com.possebom.checkgo.MainActivity;
+import com.possebom.checkgo.R;
 import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.model.Card;
 import com.possebom.checkgo.model.Entry;
+import com.possebom.checkgo.service.UpgradeService;
 import com.possebom.checkgo.widget.CheckGoWidget;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -42,6 +48,7 @@ public final class UpdateCards {
     private static class AsyncUpdateCards extends AsyncTask<Void, Void, Boolean> {
         private final UpdateInterface updateInterface;
         private final Context context;
+        private boolean isCharged = false;
 
         public AsyncUpdateCards(final Context context, final UpdateInterface updateInterface) {
             this.updateInterface = updateInterface;
@@ -53,13 +60,19 @@ public final class UpdateCards {
             boolean ok = true;
             final OkHttpClient client = new OkHttpClient();
             for (final Card card : CGController.INSTANCE.getCards()) {
+                final float total = card.getTotal();
                 final String url = String.format(Locale.getDefault(), "http://m.alelo.com.br/android/ajax-se.do?cartao=%s&tipo=3", card.getNumber());
                 final Request request = new Request.Builder().url(url).build();
                 try {
                     final Response response = client.newCall(request).execute();
                     ok = response != null && updateCard(card, response.body().string());
+                    if(ok && card.getTotal() > total){
+                        isCharged = true;
+                    }
                 } catch (final IOException e) {
+                    Log.e("Error updating: "+ e.getMessage());
                     ok = false;
+                    e.printStackTrace();
                 }
             }
             return ok;
@@ -84,6 +97,23 @@ public final class UpdateCards {
                     intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
                     intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
                     context.sendBroadcast(intent);
+                }
+
+
+                if(isCharged) {
+                    final Intent intent = new Intent(context, MainActivity.class);
+                    final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+                    final Notification notification = new Notification.Builder(context)
+                            .setContentTitle(context.getString(R.string.app_name))
+                            .setContentText(context.getString(R.string.card_charged))
+                            .setSmallIcon(R.drawable.ic_coins)
+                            .setContentIntent(pendingIntent)
+                            .build();
+
+                    final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                    notificationManager.notify(22, notification);
                 }
             } else {
                 if (updateInterface != null) {

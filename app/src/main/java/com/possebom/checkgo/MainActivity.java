@@ -20,6 +20,7 @@ import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.interfaces.CardCallback;
 import com.possebom.checkgo.model.Card;
 import com.possebom.checkgo.util.UpdateCards;
+import com.possebom.checkgo.util.UpgradeCheck;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, UpdateCards.UpdateInterface, CardCallback {
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onRefresh() {
                 UpdateCards.start(MainActivity.this, MainActivity.this);
+                new UpgradeCheck(MainActivity.this).execute();
             }
         });
 
@@ -69,20 +71,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         final EditText editTextCardNumber = (EditText) dialog.getCustomView().findViewById(R.id.editTextCardNumber);
 
                         if (TextUtils.isEmpty(editTextCardName.getText())) {
-                            editTextCardName.setError("Invalid card name");
+                            editTextCardName.setError(getString(R.string.invalid_card_name));
                             return;
                         }
 
                         final long cardNumber;
                         if (editTextCardNumber.getText().length() != 16) {
-                            editTextCardNumber.setError("Invalid card number");
+                            editTextCardNumber.setError(getString(R.string.invalid_card_number));
                             return;
                         }
 
                         try {
                             cardNumber = Long.parseLong(editTextCardNumber.getText().toString());
                         } catch (final NumberFormatException e) {
-                            editTextCardNumber.setError("Invalid card number");
+                            editTextCardNumber.setError(getString(R.string.invalid_card_number));
                             return;
                         }
 
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void updateError() {
         if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false);
-        Toast.makeText(getApplicationContext(), "Error updating", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), R.string.error_updating, Toast.LENGTH_LONG).show();
     }
 
     @Override

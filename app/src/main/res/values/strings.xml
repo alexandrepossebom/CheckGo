@@ -18,5 +18,14 @@
     <string name="card_number">Card Number</string>
     <string name="delete_card_title">Delete Card?</string>
     <string name="delete_card_body">Are you sure to delete this card ?</string>
+    <string name="download">Download</string>
+    <string name="new_version_available">New version available</string>
+    <string name="click_to_install">Click to install</string>
+    <string name="downloading_app">Downloading CheckGo</string>
+    <string name="downloading">Download in progress…</string>
+    <string name="card_charged">Your card is recharged.</string>
+    <string name="invalid_card_number">Invalid card number</string>
+    <string name="invalid_card_name">Invalid card name</string>
+    <string name="error_updating">Error updating</string>
 
 </resources>

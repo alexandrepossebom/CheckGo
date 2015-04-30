@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.possebom.checkgo" >
+<manifest
+    package="com.possebom.checkgo"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".MyApplication"
@@ -17,41 +18,48 @@
         tools:ignore="UnusedAttribute">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".HistoryActivity"
-            android:label="@string/title_activity_history" >
+            android:label="@string/title_activity_history">
         </activity>
 
         <service
             android:name=".service.UpdateService"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
-        <receiver android:name=".widget.CheckGoWidget" >
+        <receiver android:name=".widget.CheckGoWidget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/check_go_widget_info" />
+                android:resource="@xml/check_go_widget_info"/>
         </receiver>
 
-        <activity android:name=".widget.CheckGoWidgetConfigureActivity" >
+        <activity android:name=".widget.CheckGoWidgetConfigureActivity">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.crashlytics.ApiKey"
-            android:value="95b6aa1a3cdca6c8357c016fceb955b8514d561e" />
+            android:value="95b6aa1a3cdca6c8357c016fceb955b8514d561e"/>
+
+        <service
+            android:name=".service.UpgradeService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>
