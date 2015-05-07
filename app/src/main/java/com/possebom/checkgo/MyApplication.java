@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 
-import com.crashlytics.android.Crashlytics;
 import com.github.snowdream.android.util.FilePathGenerator;
 import com.github.snowdream.android.util.Log;
 import com.possebom.checkgo.controller.CGController;
@@ -19,7 +18,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Crashlytics.start(this);
+//        Crashlytics.start(this);
 
         CGController.INSTANCE.restore(this);
 

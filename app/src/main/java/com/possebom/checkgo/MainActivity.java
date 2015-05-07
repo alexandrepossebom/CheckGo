@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         final EditText editTextCardName = (EditText) dialog.getCustomView().findViewById(R.id.editTextCardName);
                         final EditText editTextCardNumber = (EditText) dialog.getCustomView().findViewById(R.id.editTextCardNumber);
 
-                        if (TextUtils.isEmpty(editTextCardName.getText())) {
+                        if (TextUtils.isEmpty(editTextCardName.getText().toString().trim())) {
                             editTextCardName.setError(getString(R.string.invalid_card_name));
                             return;
                         }
@@ -103,6 +103,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }).build();
         dialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
