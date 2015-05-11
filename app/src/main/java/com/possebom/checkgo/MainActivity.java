@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onPositive(final MaterialDialog dialog) {
                         final EditText editTextCardName = (EditText) dialog.getCustomView().findViewById(R.id.editTextCardName);
                         final EditText editTextCardNumber = (EditText) dialog.getCustomView().findViewById(R.id.editTextCardNumber);
+                        final View progressBar = dialog.getCustomView().findViewById(R.id.progressBar);
+                        final View contentView = dialog.getCustomView().findViewById(R.id.contentView);
+
+                        editTextCardName.setError(null);
+                        editTextCardNumber.setError(null);
 
                         if (TextUtils.isEmpty(editTextCardName.getText().toString().trim())) {
                             editTextCardName.setError(getString(R.string.invalid_card_name));
@@ -90,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             return;
                         }
 
+                        contentView.setVisibility(View.INVISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
+
                         final String cardName = editTextCardName.getText().toString();
 
                         final Card card = new Card(cardName, cardNumber);
@@ -107,8 +115,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             @Override
                             public void updateError() {
-                                Toast.makeText(MainActivity.this, "deu ruim", Toast.LENGTH_LONG).show();
+                                editTextCardNumber.setError(getString(R.string.invalid_card_number_or_internet));
                                 Log.e("Error in update");
+
+                                contentView.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                             }
                         }).execute(card);
 

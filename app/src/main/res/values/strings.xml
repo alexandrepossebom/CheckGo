@@ -27,5 +27,6 @@
     <string name="invalid_card_number">Invalid card number</string>
     <string name="invalid_card_name">Invalid card name</string>
     <string name="error_updating">Error updating</string>
+    <string name="invalid_card_number_or_internet">Invalid card number or no has internet connection</string>
 
 </resources>
