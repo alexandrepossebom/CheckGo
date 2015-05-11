@@ -14,11 +14,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.snowdream.android.util.Log;
 import com.melnykov.fab.FloatingActionButton;
 import com.possebom.checkgo.adapter.CardsAdapter;
 import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.interfaces.CardCallback;
 import com.possebom.checkgo.model.Card;
+import com.possebom.checkgo.util.AsyncUpdateCard;
 import com.possebom.checkgo.util.UpdateCards;
 import com.possebom.checkgo.util.UpgradeCheck;
 
@@ -91,10 +93,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         final String cardName = editTextCardName.getText().toString();
 
                         final Card card = new Card(cardName, cardNumber);
-                        CGController.INSTANCE.getCards().add(card);
-                        CGController.INSTANCE.save(getApplicationContext());
-                        mAdapter.notifyDataSetChanged();
-                        dialog.dismiss();
+
+                        new AsyncUpdateCard(MainActivity.this, new UpdateCards.UpdateInterface() {
+                            @Override
+                            public void updateSuccess() {
+
+                                CGController.INSTANCE.getCards().add(card);
+                                CGController.INSTANCE.save(getApplicationContext());
+                                mAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
+
+                            }
+
+                            @Override
+                            public void updateError() {
+                                Toast.makeText(MainActivity.this, "deu ruim", Toast.LENGTH_LONG).show();
+                                Log.e("Error in update");
+                            }
+                        }).execute(card);
+
                     }
 
                     @Override
