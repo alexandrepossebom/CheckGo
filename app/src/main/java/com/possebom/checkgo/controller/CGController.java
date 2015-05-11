@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import com.github.snowdream.android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.possebom.checkgo.model.Card;
 
 import java.util.ArrayList;
@@ -45,11 +44,12 @@ public enum CGController {
         final Gson gson = new Gson();
         try {
             final Card[] cardArray = gson.fromJson(serializedData, Card[].class);
-            if(cardArray != null) {
-                cards = Arrays.asList(cardArray);
+            if (cardArray != null) {
+                cards = new ArrayList<>();
+                cards.addAll(Arrays.asList(cardArray));
             }
         } catch (final JsonSyntaxException exception) {
-            Log.e("Error restoring : " + exception.getMessage() + " json: "+ serializedData);
+            Log.e("Error restoring : " + exception.getMessage() + " json: " + serializedData);
         }
 
         if (cards == null) {
