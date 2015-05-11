@@ -6,10 +6,12 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.snowdream.android.util.FilePathGenerator;
 import com.github.snowdream.android.util.Log;
 import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.service.UpdateService;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Created by alexandre on 06/02/15.
@@ -18,7 +20,8 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        Crashlytics.start(this);
+        Crashlytics.start(this);
+        LeakCanary.install(this);
 
         CGController.INSTANCE.restore(this);
 

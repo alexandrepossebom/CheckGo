@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import com.possebom.checkgo.model.Card;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,8 +44,10 @@ public enum CGController {
     private boolean restore(final String serializedData) {
         final Gson gson = new Gson();
         try {
-            cards = gson.fromJson(serializedData, new TypeToken<List<Card>>() {
-            }.getType());
+            final Card[] cardArray = gson.fromJson(serializedData, Card[].class);
+            if(cardArray != null) {
+                cards = Arrays.asList(cardArray);
+            }
         } catch (final JsonSyntaxException exception) {
             Log.e("Error restoring : " + exception.getMessage() + " json: "+ serializedData);
         }

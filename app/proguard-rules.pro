@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-optimizationpasses 5
+-keepnames class ** { *; }
+-keepattributes *Annotation*
+-dontwarn
+-ignorewarnings

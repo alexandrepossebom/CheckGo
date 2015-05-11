@@ -15,7 +15,6 @@ import com.possebom.checkgo.R;
 import com.possebom.checkgo.controller.CGController;
 import com.possebom.checkgo.model.Card;
 import com.possebom.checkgo.model.Entry;
-import com.possebom.checkgo.service.UpgradeService;
 import com.possebom.checkgo.widget.CheckGoWidget;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -65,12 +64,13 @@ public final class UpdateCards {
                 final Request request = new Request.Builder().url(url).build();
                 try {
                     final Response response = client.newCall(request).execute();
+                    final Date lastUpdate = card.getLastUpdate();
                     ok = response != null && updateCard(card, response.body().string());
-                    if(ok && card.getTotal() > total){
+                    if (ok && card.getTotal() > total && lastUpdate != null) {
                         isCharged = true;
                     }
                 } catch (final IOException e) {
-                    Log.e("Error updating: "+ e.getMessage());
+                    Log.e("Error updating: " + e.getMessage());
                     ok = false;
                     e.printStackTrace();
                 }
@@ -100,7 +100,7 @@ public final class UpdateCards {
                 }
 
 
-                if(isCharged) {
+                if (isCharged) {
                     final Intent intent = new Intent(context, MainActivity.class);
                     final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
@@ -210,7 +210,7 @@ public final class UpdateCards {
             card.setNextCharge(nextCharge);
             card.setNextChargeValor(nextChargeValor);
 
-            if(jo.has("Extrato")) {
+            if (jo.has("Extrato")) {
                 final JSONObject joExtrato = jo.getJSONObject("Extrato");
                 final JSONArray ja = joExtrato.getJSONArray("lancamentos");
 
@@ -231,7 +231,8 @@ public final class UpdateCards {
                         amount = 0;
                     }
 
-                    final String place = jsonObjectEntry.getString("estab");
+                    final String place = jsonObjectEntry.getString("estab")
+                            .replaceAll("&amp;", "&");
 
                     final Entry entry = new Entry();
                     entry.setDay(day);
@@ -252,7 +253,7 @@ public final class UpdateCards {
         } catch (JSONException e) {
             e.printStackTrace();
 
-            Log.e("Json is : "+ json);
+            Log.e("Json is : " + json);
             return false;
         }
         return true;
